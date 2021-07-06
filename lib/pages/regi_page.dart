@@ -11,7 +11,7 @@ class RegPage extends StatefulWidget {
 }
 
 class _RegPageState extends State<RegPage> {
-  String username, email, password, password_confirmation;
+  String name, email, password, password_confirmation;
 
   final _key = new GlobalKey<FormState>();
   check() {
@@ -25,7 +25,7 @@ class _RegPageState extends State<RegPage> {
   register() async {
     final response = await http
         .post("http://inv-api-pgsql.herokuapp.com/api/register", body: {
-      'username': username,
+      'name': name,
       'email': email,
       'password': password,
       'password_confirmation': password_confirmation
@@ -57,11 +57,11 @@ class _RegPageState extends State<RegPage> {
                       TextFormField(
                         validator: (e) {
                           if (e.isEmpty) {
-                            return "Masukkan Username";
+                            return "Masukkan name";
                           }
                         },
-                        onSaved: (e) => username = e,
-                        decoration: InputDecoration(hintText: "username"),
+                        onSaved: (e) => name = e,
+                        decoration: InputDecoration(hintText: "name"),
                       ),
                       TextFormField(
                         validator: (e) {
