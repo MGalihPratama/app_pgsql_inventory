@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:inventori/pages/regi_page.dart';
@@ -16,6 +16,7 @@ class _LoginPageState extends State<LoginPage> {
   String email, password;
 
   final _key = new GlobalKey<FormState>();
+
   check() {
     final form = _key.currentState;
     if (form.validate()) {
@@ -28,8 +29,22 @@ class _LoginPageState extends State<LoginPage> {
     final response = await http.post(
         "http://inv-api-pgsql.herokuapp.com/api/login",
         body: {'email': email, 'password': password});
-    final data = jsonEncode(response.body);
+    //final data = jsonEncode(response.body);
+    final Map<String, dynamic> data = json.decode(response.body);
+    //print(data);
     print(data);
+
+    if (data["message"] == "Invalid Credentials") {
+      // return "gagal";
+      Fluttertoast.showToast(
+        msg: "Email atau Password salah",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
+    } else {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomePage()));
+    }
   }
 
   bool _secureText = false;
