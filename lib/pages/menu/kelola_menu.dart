@@ -1,15 +1,68 @@
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:inventori/pages/menu/item_card.dart';
-
 import 'package:inventori/utils/color.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
 
-class KelolaMenu extends StatelessWidget {
+class KelolaMenu extends StatefulWidget {
+  @override
+  _KelolaMenuState createState() => _KelolaMenuState();
+}
+
+class _KelolaMenuState extends State<KelolaMenu> {
   final TextEditingController nameController = TextEditingController();
+
   final TextEditingController hargaController = TextEditingController();
+
   final TextEditingController stokController = TextEditingController();
+  StreamController _listController = StreamController();
+
+  _getUserID() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var user = localStorage.getString("user");
+    return "?user_id=$user['user_id']";
+  }
+
+  _getToken() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var access_token = localStorage.getString('access_token');
+    return "$access_token";
+  }
+
+  _setHeaders() async => {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': ' Bearer ' + await _getToken()
+      };
+
+  getData() async {
+    var fullUrl =
+        "http://inv-api-pgsql.herokuapp.com/api/product" + await _getUserID();
+    //return await http.get(Uri.parse(fullUrl), headers: _setHeaders());
+    var response =
+        await http.get(Uri.parse(fullUrl), headers: await _setHeaders());
+
+    // final Map<String, dynamic> data = json.decode(response.body);
+    var data = json.decode(response.body);
+    _listController.add(data);
+    print(data);
+  }
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +101,8 @@ class KelolaMenu extends StatelessWidget {
                         children: snapshot.data.docs
                             .map((e) => ItemCard(
                                   e.data()['name'],
-                                  e.data()['harga'],
-                                  e.data()['stok'],
+                                  e.data()['stock'],
+                                  e.data()['price'],
                                   onDelete: () {
                                     users.doc(e.id).delete();
                                   },
@@ -117,14 +170,16 @@ class KelolaMenu extends StatelessWidget {
                         ),
                         onPressed: () {
                           //// ADD DATA HERE
-                          users.add({
-                            'name': nameController.text,
-                            'harga': int.tryParse(hargaController.text) ?? 0,
-                            'stok': int.tryParse(stokController.text) ?? 0
-                          });
-                          nameController.text = '';
-                          hargaController.text = '';
-                          stokController.text = '';
+                          getData();
+
+                          // users.add({
+                          //   'name': nameController.text,
+                          //   'harga': int.tryParse(hargaController.text) ?? 0,
+                          //   'stok': int.tryParse(stokController.text) ?? 0
+                          // });
+                          // nameController.text = '';
+                          // hargaController.text = '';
+                          // stokController.text = '';
                         }),
                   ),
                 ],

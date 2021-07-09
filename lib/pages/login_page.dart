@@ -6,6 +6,7 @@ import 'package:inventori/pages/regi_page.dart';
 import 'package:inventori/pages/home_page.dart';
 import 'package:inventori/widgets/btn_widget.dart';
 import 'package:inventori/widgets/herder_container.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -42,14 +43,19 @@ class _LoginPageState extends State<LoginPage> {
         gravity: ToastGravity.CENTER,
       );
     } else {
+      SharedPreferences localStorage = await SharedPreferences.getInstance();
+      localStorage.setString('access_token', data['access_token']);
+      localStorage.setString('user', json.encode(data['user']));
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => HomePage()));
     }
   }
 
-  bool _secureText = false;
-  showHide() {
-    _secureText = !_secureText;
+  bool _obscureText = true;
+  void _toggle() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
   }
 
   @override
@@ -82,13 +88,13 @@ class _LoginPageState extends State<LoginPage> {
                             return "Masukkan Password";
                           }
                         },
-                        obscureText: _secureText,
+                        obscureText: _obscureText,
                         onSaved: (e) => password = e,
                         decoration: InputDecoration(
                             hintText: "Password",
                             suffixIcon: IconButton(
-                              onPressed: showHide,
-                              icon: Icon(_secureText
+                              onPressed: _toggle,
+                              icon: Icon(_obscureText
                                   ? Icons.visibility_off
                                   : Icons.visibility),
                             )),

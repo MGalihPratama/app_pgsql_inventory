@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:inventori/utils/color.dart';
 import 'package:inventori/widgets/btn_widget.dart';
+import 'package:inventori/pages/login_page.dart';
 import 'package:inventori/widgets/herder_container.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -30,13 +32,39 @@ class _RegPageState extends State<RegPage> {
       'password': password,
       'password_confirmation': password_confirmation
     });
-    final data = jsonEncode(response.body);
+
+    final Map<String, dynamic> data = json.decode(response.body);
     print(data);
+
+    if (data["message"] == "failed") {
+      Fluttertoast.showToast(
+        msg: "Email telah digunakan",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
+    } else {
+      Fluttertoast.showToast(
+        msg: "Registrasi Berhasil",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LoginPage()));
+    }
   }
 
-  bool _secureText = true;
-  showHide() {
-    _secureText = !_secureText;
+  bool _obscureText1 = true;
+  bool _obscureText2 = true;
+  void _toggle1() {
+    setState(() {
+      _obscureText1 = !_obscureText1;
+    });
+  }
+
+  void _toggle2() {
+    setState(() {
+      _obscureText2 = !_obscureText2;
+    });
   }
 
   @override
@@ -78,13 +106,13 @@ class _RegPageState extends State<RegPage> {
                             return "Masukkan Password";
                           }
                         },
-                        obscureText: _secureText,
+                        obscureText: _obscureText1,
                         onSaved: (e) => password = e,
                         decoration: InputDecoration(
                             hintText: "Password",
                             suffixIcon: IconButton(
-                              onPressed: showHide,
-                              icon: Icon(_secureText
+                              onPressed: _toggle1,
+                              icon: Icon(_obscureText1
                                   ? Icons.visibility_off
                                   : Icons.visibility),
                             )),
@@ -95,13 +123,13 @@ class _RegPageState extends State<RegPage> {
                             return "Konfirmasi Password";
                           }
                         },
-                        obscureText: _secureText,
+                        obscureText: _obscureText2,
                         onSaved: (e) => password_confirmation = e,
                         decoration: InputDecoration(
                             hintText: "Password",
                             suffixIcon: IconButton(
-                              onPressed: showHide,
-                              icon: Icon(_secureText
+                              onPressed: _toggle2,
+                              icon: Icon(_obscureText2
                                   ? Icons.visibility_off
                                   : Icons.visibility),
                             )),

@@ -34,11 +34,11 @@ class ItemCard extends StatelessWidget {
                         fontWeight: FontWeight.w600, fontSize: 16)),
               ),
               Text(
-                "Stok : $stok ",
+                "Stock : $stok ",
                 style: GoogleFonts.poppins(),
               ),
               Text(
-                "Harga : $harga ",
+                "price : $harga ",
                 style: GoogleFonts.poppins(),
               )
             ],
