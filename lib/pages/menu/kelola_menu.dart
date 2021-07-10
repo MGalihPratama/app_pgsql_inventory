@@ -25,7 +25,7 @@ class _KelolaMenuState extends State<KelolaMenu> {
   _getUserID() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var user = localStorage.getString("user");
-    return "?user_id=$user['user_id']";
+    return "$user['user_id']";
   }
 
   _getToken() async {
@@ -40,15 +40,15 @@ class _KelolaMenuState extends State<KelolaMenu> {
         'Authorization': ' Bearer ' + await _getToken()
       };
 
-  getData() async {
-    var fullUrl =
-        "http://inv-api-pgsql.herokuapp.com/api/product" + await _getUserID();
+  Future getData() async {
+    var fullUrl = "http://inv-api-pgsql.herokuapp.com/api/product?user_id=" +
+        await _getUserID();
     //return await http.get(Uri.parse(fullUrl), headers: _setHeaders());
     var response =
         await http.get(Uri.parse(fullUrl), headers: await _setHeaders());
 
     // final Map<String, dynamic> data = json.decode(response.body);
-    var data = json.decode(response.body);
+    Map data = json.decode(response.body);
     _listController.add(data);
     print(data);
   }
@@ -66,8 +66,8 @@ class _KelolaMenuState extends State<KelolaMenu> {
 
   @override
   Widget build(BuildContext context) {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    CollectionReference users = firestore.collection('user');
+    // FirebaseFirestore firestore = FirebaseFirestore.instance;
+    // CollectionReference users = firestore.collection('user');
     return Scaffold(
         appBar: AppBar(
           backgroundColor: orangeColors,
@@ -93,34 +93,35 @@ class _KelolaMenuState extends State<KelolaMenu> {
           children: [
             ListView(
               children: [
-                StreamBuilder<QuerySnapshot>(
-                  stream: users.orderBy('name').snapshots(),
-                  builder: (_, snapshot) {
+                StreamBuilder(
+                  stream: _listController.stream,
+                  builder: (context, snapshot) {
                     if (snapshot.hasData) {
+                      var lst = snapshot.data['products'];
                       return Column(
-                        children: snapshot.data.docs
-                            .map((e) => ItemCard(
-                                  e.data()['name'],
-                                  e.data()['stock'],
-                                  e.data()['price'],
+                        children: lst
+                            .map<Widget>((e) => ItemCard(
+                                  e['name'],
+                                  e['price'].toString(),
+                                  e['stock'].toString(),
                                   onDelete: () {
-                                    users.doc(e.id).delete();
+                                    // users.doc(e.id).delete();
                                   },
                                   onUpdate: () {
                                     // users
                                     //     .doc(e.id)
                                     //     .update({'stok': e.data()['stok'] + 1});
-                                    AlertUpdate(context).then((onValue) {
-                                      Scaffold.of(context).showSnackBar(
-                                          SnackBar(
-                                              content: Text("Hello $onValue")));
-                                    });
+                                    // AlertUpdate(context).then((onValue) {
+                                    //   Scaffold.of(context).showSnackBar(
+                                    //       SnackBar(
+                                    //           content: Text("Hello $onValue")));
+                                    // });
                                   },
                                 ))
                             .toList(),
                       );
                     } else {
-                      return Text("Loading");
+                      return Text("Loading....");
                     }
                   },
                 ),
@@ -133,70 +134,113 @@ class _KelolaMenuState extends State<KelolaMenu> {
         ));
   }
 
+  String name, stock, price;
+
+  final _key = new GlobalKey<FormState>();
+  TambahBarang() {
+    final form = _key.currentState;
+    if (form.validate()) {
+      form.save();
+      tambah();
+    }
+  }
+
+  tambah() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var user = localStorage.getString("user");
+    var userdc = jsonDecode(user);
+    var msg = jsonEncode({
+      'user_id': userdc['id'],
+      'name': name,
+      'stock': stock,
+      'price': int.parse(price)
+    });
+    final response = await http.post(
+        "http://inv-api-pgsql.herokuapp.com/api/product",
+        headers: await _setHeaders(),
+        body: msg);
+
+    Map data = json.decode(response.body);
+    print(data);
+  }
+
   Future<String> createAlertDialog(BuildContext context) {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    CollectionReference users = firestore.collection('user');
     return showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            title: Text("Tambah Barang Baru"),
-            content: Container(
-              height: 200,
-              child: Column(
-                children: [
-                  TextField(
-                    controller: nameController,
-                    decoration: InputDecoration(hintText: "Nama Barang "),
-                  ),
-                  TextField(
-                    controller: hargaController,
-                    decoration: InputDecoration(hintText: "harga (ex. 2000)"),
-                  ),
-                  TextField(
-                    controller: stokController,
-                    decoration: InputDecoration(hintText: "stok (ex. 10)"),
-                  ),
-                  Container(
-                    width: 100,
-                    child: RaisedButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                        color: Colors.orange,
-                        child: Text(
-                          'Tambah',
-                          style: GoogleFonts.poppins(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                        onPressed: () {
-                          //// ADD DATA HERE
-                          getData();
-
-                          // users.add({
-                          //   'name': nameController.text,
-                          //   'harga': int.tryParse(hargaController.text) ?? 0,
-                          //   'stok': int.tryParse(stokController.text) ?? 0
-                          // });
-                          // nameController.text = '';
-                          // hargaController.text = '';
-                          // stokController.text = '';
-                        }),
-                  ),
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              Container(
-                height: 25,
-                child: new FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  textColor: Theme.of(context).primaryColor,
-                  child: const Text('Tutup'),
+          return Form(
+            key: _key,
+            child: AlertDialog(
+              title: Text("Tambah Barang Baru"),
+              content: Container(
+                height: 200,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      validator: (e) {
+                        if (e.isEmpty) {
+                          return "Masukan nama Barang";
+                        }
+                      },
+                      onSaved: (e) => name = e,
+                      decoration: InputDecoration(hintText: "Nama Barang"),
+                    ),
+                    TextFormField(
+                      validator: (e) {
+                        if (e.isEmpty) {
+                          return "Masukkan stok barang";
+                        }
+                      },
+                      onSaved: (e) => stock = e,
+                      decoration: InputDecoration(hintText: "Stok Barang"),
+                    ),
+                    TextFormField(
+                      validator: (e) {
+                        if (e.isEmpty) {
+                          return "Masukkan harga barang";
+                        }
+                      },
+                      onSaved: (e) => price = e,
+                      decoration: InputDecoration(hintText: "Harga Barang"),
+                    ),
+                    MaterialButton(
+                      onPressed: () {
+                        TambahBarang();
+                      },
+                      child: Text("Tambah"),
+                    ),
+                    // Container(
+                    //   width: 100,
+                    //   child: RaisedButton(
+                    //       shape: RoundedRectangleBorder(
+                    //           borderRadius: BorderRadius.circular(8)),
+                    //       color: Colors.orange,
+                    //       child: Text(
+                    //         'Tambah',
+                    //         style: GoogleFonts.poppins(
+                    //             color: Colors.white,
+                    //             fontWeight: FontWeight.bold),
+                    //       ),
+                    //       onPressed: () {
+                    //         TambahBarang();
+                    //       }),
+                    // ),
+                  ],
                 ),
               ),
-            ],
+              actions: <Widget>[
+                Container(
+                  height: 25,
+                  child: new FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    textColor: Theme.of(context).primaryColor,
+                    child: const Text('Tutup'),
+                  ),
+                ),
+              ],
+            ),
           );
         });
   }

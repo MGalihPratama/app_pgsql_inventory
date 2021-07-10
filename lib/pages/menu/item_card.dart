@@ -3,14 +3,14 @@ import 'package:google_fonts/google_fonts.dart';
 
 class ItemCard extends StatelessWidget {
   final String name;
-  final int harga;
-  final int stok;
+  final String price;
+  final String stock;
   // Pointer to Update Function
   final Function onUpdate;
   // Pointer to Delete Function
   final Function onDelete;
 
-  ItemCard(this.name, this.harga, this.stok, {this.onUpdate, this.onDelete});
+  ItemCard(this.name, this.price, this.stock, {this.onUpdate, this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +34,11 @@ class ItemCard extends StatelessWidget {
                         fontWeight: FontWeight.w600, fontSize: 16)),
               ),
               Text(
-                "Stock : $stok ",
+                "Stok : $stock ",
                 style: GoogleFonts.poppins(),
               ),
               Text(
-                "price : $harga ",
+                "Harga : $price ",
                 style: GoogleFonts.poppins(),
               )
             ],
