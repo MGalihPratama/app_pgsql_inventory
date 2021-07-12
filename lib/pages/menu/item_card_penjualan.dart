@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class ItemCard extends StatelessWidget {
+class ItemCardPenjualan extends StatelessWidget {
   final String name;
   final String price;
   final String stock;
-  // Pointer to Update Function
-  final Function onUpdate;
-  // Pointer to Delete Function
-  final Function onDelete;
-  final Function stok;
-  ItemCard(this.name, this.price, this.stock,
-      {this.onUpdate, this.stok, this.onDelete});
+  // Pointer to Update Functio
+  final Function jual;
+  ItemCardPenjualan(this.name, this.price, this.stock, {this.jual});
 
   @override
   Widget build(BuildContext context) {
@@ -51,21 +47,6 @@ class ItemCard extends StatelessWidget {
                 width: 60,
                 child: RaisedButton(
                     shape: CircleBorder(),
-                    color: Colors.green[900],
-                    child: Center(
-                        child: Icon(
-                      Icons.arrow_upward,
-                      color: Colors.white,
-                    )),
-                    onPressed: () {
-                      if (onUpdate != null) onUpdate();
-                    }),
-              ),
-              SizedBox(
-                height: 40,
-                width: 60,
-                child: RaisedButton(
-                    shape: CircleBorder(),
                     color: Colors.yellow[900],
                     child: Center(
                         child: Icon(
@@ -73,24 +54,9 @@ class ItemCard extends StatelessWidget {
                       color: Colors.white,
                     )),
                     onPressed: () {
-                      if (stok != null) stok();
+                      if (jual != null) jual();
                     }),
               ),
-              SizedBox(
-                height: 40,
-                width: 60,
-                child: RaisedButton(
-                    shape: CircleBorder(),
-                    color: Colors.red[900],
-                    child: Center(
-                        child: Icon(
-                      Icons.delete,
-                      color: Colors.white,
-                    )),
-                    onPressed: () {
-                      if (onDelete != null) onDelete();
-                    }),
-              )
             ],
           )
         ],

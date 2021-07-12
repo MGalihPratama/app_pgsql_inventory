@@ -15,11 +15,6 @@ class KelolaMenu extends StatefulWidget {
 }
 
 class _KelolaMenuState extends State<KelolaMenu> {
-  final TextEditingController nameController = TextEditingController();
-
-  final TextEditingController hargaController = TextEditingController();
-
-  final TextEditingController stokController = TextEditingController();
   StreamController _listController = StreamController();
 
   _getUserID() async {
@@ -64,10 +59,19 @@ class _KelolaMenuState extends State<KelolaMenu> {
     super.dispose();
   }
 
+  hapus(e) async {
+    var id = e['id'];
+    final response = await http.delete(
+      "http://inv-api-pgsql.herokuapp.com/api/product/" + id.toString(),
+      headers: await _setHeaders(),
+    );
+
+    Map data = json.decode(response.body);
+    print(data);
+  }
+
   @override
   Widget build(BuildContext context) {
-    // FirebaseFirestore firestore = FirebaseFirestore.instance;
-    // CollectionReference users = firestore.collection('user');
     return Scaffold(
         appBar: AppBar(
           backgroundColor: orangeColors,
@@ -106,22 +110,29 @@ class _KelolaMenuState extends State<KelolaMenu> {
                                   e['stock'].toString(),
                                   onDelete: () {
                                     // users.doc(e.id).delete();
+                                    print(e['id']);
+                                    hapus(e);
+                                  },
+                                  stok: () {
+                                    AlertStok(context, e).then((onValue) {
+                                      Scaffold.of(context).showSnackBar(
+                                          SnackBar(
+                                              content: Text("Hello $onValue")));
+                                    });
                                   },
                                   onUpdate: () {
-                                    // users
-                                    //     .doc(e.id)
-                                    //     .update({'stok': e.data()['stok'] + 1});
-                                    // AlertUpdate(context).then((onValue) {
-                                    //   Scaffold.of(context).showSnackBar(
-                                    //       SnackBar(
-                                    //           content: Text("Hello $onValue")));
-                                    // });
+                                    print(e['name']);
+                                    AlertUpdate(context, e).then((onValue) {
+                                      Scaffold.of(context).showSnackBar(
+                                          SnackBar(
+                                              content: Text("Hello $onValue")));
+                                    });
                                   },
                                 ))
                             .toList(),
                       );
                     } else {
-                      return Text("Loading....");
+                      return Center(child: Text("Loading...."));
                     }
                   },
                 ),
@@ -134,7 +145,7 @@ class _KelolaMenuState extends State<KelolaMenu> {
         ));
   }
 
-  String name, stock, price;
+  String name, stock, price, id;
 
   final _key = new GlobalKey<FormState>();
   TambahBarang() {
@@ -157,6 +168,30 @@ class _KelolaMenuState extends State<KelolaMenu> {
     });
     final response = await http.post(
         "http://inv-api-pgsql.herokuapp.com/api/product",
+        headers: await _setHeaders(),
+        body: msg);
+
+    Map data = json.decode(response.body);
+    print(data);
+
+    Fluttertoast.showToast(
+      msg: "Barang ditambahkan",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+    );
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => KelolaMenu()));
+  }
+
+  update(e) async {
+    final form = _key.currentState;
+    if (form.validate()) {
+      form.save();
+    }
+    var id = e.toString();
+    var msg = jsonEncode({'name': name, 'price': int.parse(price)});
+    final response = await http.patch(
+        "http://inv-api-pgsql.herokuapp.com/api/product/" + id,
         headers: await _setHeaders(),
         body: msg);
 
@@ -245,68 +280,144 @@ class _KelolaMenuState extends State<KelolaMenu> {
         });
   }
 
-  Future<String> AlertUpdate(BuildContext context) {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    CollectionReference users = firestore.collection('user');
+  Future<String> AlertUpdate(BuildContext context, valueE) {
     return showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            title: Text("Ubah Data Barang"),
-            content: Container(
-              height: 200,
-              child: Column(
-                children: [
-                  TextField(
-                    controller: nameController,
-                    decoration: InputDecoration(hintText: "Nama Barang "),
-                  ),
-                  TextField(
-                    controller: hargaController,
-                    decoration: InputDecoration(hintText: "harga (ex. 2000)"),
-                  ),
-                  TextField(
-                    controller: stokController,
-                    decoration: InputDecoration(hintText: "stok (ex. 10)"),
-                  ),
-                  Container(
-                    width: 100,
-                    child: RaisedButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                        color: Colors.orange,
-                        child: Text(
-                          'Ubah',
-                          style: GoogleFonts.poppins(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                        onPressed: () {
-                          //// ADD DATA HERE
-                          users.add({
-                            'name': nameController.text,
-                            'harga': int.tryParse(hargaController.text) ?? 0,
-                            'stok': int.tryParse(stokController.text) ?? 0
-                          });
-                          nameController.text = '';
-                          hargaController.text = '';
-                          stokController.text = '';
-                        }),
-                  ),
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              Container(
-                height: 25,
-                child: new FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  textColor: Theme.of(context).primaryColor,
-                  child: const Text('Tutup'),
+          return Form(
+            key: _key,
+            child: AlertDialog(
+              title: Text("Ubah Data Barang"),
+              content: Container(
+                height: 200,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      initialValue: valueE['name'],
+                      validator: (e) {
+                        if (e.isEmpty) {
+                          return "Masukan nama Barang";
+                        }
+                      },
+                      onSaved: (e) => name = e,
+                      // decoration: InputDecoration(hintText: "Nama Barang"),
+                    ),
+                    TextFormField(
+                      initialValue: valueE['price'].toString(),
+                      validator: (e) {
+                        if (e.isEmpty) {
+                          return "Masukkan harga barang";
+                        }
+                      },
+                      onSaved: (e) => price = e,
+                      decoration: InputDecoration(hintText: "Harga Barang"),
+                    ),
+                    Container(
+                      width: 100,
+                      child: RaisedButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
+                          color: Colors.orange,
+                          child: Text(
+                            'Ubah',
+                            style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: () {
+                            update(valueE['id']);
+
+                            // nameController.text = '';
+                            // hargaController.text = '';
+                            // stokController.text = '';
+                          }),
+                    ),
+                  ],
                 ),
               ),
-            ],
+              actions: <Widget>[
+                Container(
+                  height: 25,
+                  child: new FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    textColor: Theme.of(context).primaryColor,
+                    child: const Text('Tutup'),
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  Future<String> AlertStok(BuildContext context, valueE) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return Form(
+            key: _key,
+            child: AlertDialog(
+              title: Text("Tambah Stok Barang"),
+              content: Container(
+                height: 200,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(valueE['stock'].toString() + " + "),
+                        Flexible(
+                          child: TextFormField(
+                            // initialValue: valueE['stock'].toString(),
+                            validator: (e) {
+                              if (e.isEmpty) {
+                                return "Masukan nama Barang";
+                              }
+                            },
+                            onSaved: (e) => name = e,
+                            decoration: InputDecoration(
+                                hintText: "banyak yang mau ditambah"),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      width: 140,
+                      child: RaisedButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
+                          color: Colors.orange,
+                          child: Text(
+                            'Tambah Stok',
+                            style: GoogleFonts.poppins(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: () {
+                            update(valueE['id']);
+
+                            // nameController.text = '';
+                            // hargaController.text = '';
+                            // stokController.text = '';
+                          }),
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                Container(
+                  height: 25,
+                  child: new FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    textColor: Theme.of(context).primaryColor,
+                    child: const Text('Tutup'),
+                  ),
+                ),
+              ],
+            ),
           );
         });
   }
