@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
+import '../home_page.dart';
 import 'item_card_penjualan.dart';
 
 class PenjualanMenu extends StatefulWidget {
@@ -68,15 +69,15 @@ class _PenjualanMenuState extends State<PenjualanMenu> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: orangeColors,
+          automaticallyImplyLeading: true,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => HomePage()));
+            },
+          ),
           title: Text('Penjualan'),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.add_outlined,
-                color: Colors.white,
-              ),
-            )
-          ],
         ),
         backgroundColor: Colors.white,
         body: Stack(

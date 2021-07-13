@@ -80,67 +80,86 @@ class _RegPageState extends State<RegPage> {
               Expanded(
                 flex: 1,
                 child: Container(
-                  child: ListView(
-                    children: <Widget>[
-                      TextFormField(
-                        validator: (e) {
-                          if (e.isEmpty) {
-                            return "Masukkan name";
-                          }
-                        },
-                        onSaved: (e) => name = e,
-                        decoration: InputDecoration(hintText: "name"),
-                      ),
-                      TextFormField(
-                        validator: (e) {
-                          if (e.isEmpty) {
-                            return "Masukkan Email";
-                          }
-                        },
-                        onSaved: (e) => email = e,
-                        decoration: InputDecoration(hintText: "Email"),
-                      ),
-                      TextFormField(
-                        validator: (e) {
-                          if (e.isEmpty) {
-                            return "Masukkan Password";
-                          }
-                        },
-                        obscureText: _obscureText1,
-                        onSaved: (e) => password = e,
-                        decoration: InputDecoration(
-                            hintText: "Password",
-                            suffixIcon: IconButton(
-                              onPressed: _toggle1,
-                              icon: Icon(_obscureText1
-                                  ? Icons.visibility_off
-                                  : Icons.visibility),
-                            )),
-                      ),
-                      TextFormField(
-                        validator: (e) {
-                          if (e.isEmpty) {
-                            return "Konfirmasi Password";
-                          }
-                        },
-                        obscureText: _obscureText2,
-                        onSaved: (e) => password_confirmation = e,
-                        decoration: InputDecoration(
-                            hintText: "Password",
-                            suffixIcon: IconButton(
-                              onPressed: _toggle2,
-                              icon: Icon(_obscureText2
-                                  ? Icons.visibility_off
-                                  : Icons.visibility),
-                            )),
-                      ),
-                      MaterialButton(
-                        onPressed: () {
-                          check();
-                        },
-                        child: Text("Registrasi"),
-                      ),
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: ListView(
+                      children: <Widget>[
+                        TextFormField(
+                          validator: (e) {
+                            if (e.isEmpty) {
+                              return "Masukkan name";
+                            }
+                          },
+                          onSaved: (e) => name = e,
+                          decoration: InputDecoration(
+                              hintText: "name",
+                              border: OutlineInputBorder(),
+                              icon: Icon(Icons.people)),
+                        ),
+                        TextFormField(
+                          validator: (e) {
+                            if (e.isEmpty) {
+                              return "Masukkan Email";
+                            }
+                          },
+                          onSaved: (e) => email = e,
+                          decoration: InputDecoration(
+                              hintText: "Email",
+                              border: OutlineInputBorder(),
+                              icon: Icon(Icons.mail)),
+                        ),
+                        TextFormField(
+                          validator: (e) {
+                            if (e.isEmpty) {
+                              return "Masukkan Password";
+                            }
+                          },
+                          obscureText: _obscureText1,
+                          onSaved: (e) => password = e,
+                          decoration: InputDecoration(
+                              hintText: "Password",
+                              border: OutlineInputBorder(),
+                              icon: Icon(Icons.vpn_key),
+                              suffixIcon: IconButton(
+                                onPressed: _toggle1,
+                                icon: Icon(_obscureText1
+                                    ? Icons.visibility_off
+                                    : Icons.visibility),
+                              )),
+                        ),
+                        TextFormField(
+                          validator: (e) {
+                            if (e.isEmpty) {
+                              return "Konfirmasi Password";
+                            }
+                          },
+                          obscureText: _obscureText2,
+                          onSaved: (e) => password_confirmation = e,
+                          decoration: InputDecoration(
+                              hintText: "Password",
+                              border: OutlineInputBorder(),
+                              icon: Icon(Icons.vpn_key),
+                              suffixIcon: IconButton(
+                                onPressed: _toggle2,
+                                icon: Icon(_obscureText2
+                                    ? Icons.visibility_off
+                                    : Icons.visibility),
+                              )),
+                        ),
+                        // MaterialButton(
+                        //   onPressed: () {
+                        //     check();
+                        //   },
+                        //   child: Text("Registrasi"),
+                        // ),
+                        ButtonWidget(
+                          onClick: () {
+                            check();
+                          },
+                          btnText: "Registrasi",
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               )

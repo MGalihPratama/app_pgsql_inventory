@@ -9,6 +9,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
+import '../home_page.dart';
+import '../login_page.dart';
+
 class KelolaMenu extends StatefulWidget {
   @override
   _KelolaMenuState createState() => _KelolaMenuState();
@@ -68,6 +71,13 @@ class _KelolaMenuState extends State<KelolaMenu> {
 
     Map data = json.decode(response.body);
     print(data);
+    Fluttertoast.showToast(
+      msg: "Barang dihapus",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+    );
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => KelolaMenu()));
   }
 
   @override
@@ -75,6 +85,14 @@ class _KelolaMenuState extends State<KelolaMenu> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: orangeColors,
+          automaticallyImplyLeading: true,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => HomePage()));
+            },
+          ),
           title: Text('Kelola Barang'),
           actions: <Widget>[
             IconButton(
@@ -111,7 +129,12 @@ class _KelolaMenuState extends State<KelolaMenu> {
                                   onDelete: () {
                                     // users.doc(e.id).delete();
                                     print(e['id']);
-                                    hapus(e);
+                                    // hapus(e);
+                                    DeleteAlert(context, e).then((onValue) {
+                                      Scaffold.of(context).showSnackBar(
+                                          SnackBar(
+                                              content: Text("Hello $onValue")));
+                                    });
                                   },
                                   stok: () {
                                     AlertStok(context, e).then((onValue) {
@@ -197,6 +220,14 @@ class _KelolaMenuState extends State<KelolaMenu> {
 
     Map data = json.decode(response.body);
     print(data);
+
+    Fluttertoast.showToast(
+      msg: "Barang diedit",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+    );
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => KelolaMenu()));
   }
 
   Future<String> createAlertDialog(BuildContext context) {
@@ -421,4 +452,36 @@ class _KelolaMenuState extends State<KelolaMenu> {
           );
         });
   }
+
+  Future<String> DeleteAlert(BuildContext context, valueE) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Hapus Barang'),
+          content: Text("Yakin ingin hapus barang?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Iya"),
+              onPressed: () {
+                //Put your code here which you want to execute on Yes button click.
+                hapus(valueE);
+              },
+            ),
+            FlatButton(
+              child: Text("Tidak"),
+              onPressed: () {
+                //Put your code here which you want to execute on No button click.
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
+
+//alert yes no
+
+

@@ -71,50 +71,74 @@ class _LoginPageState extends State<LoginPage> {
               Expanded(
                   flex: 1,
                   child: Container(
-                      child: ListView(
-                    children: <Widget>[
-                      TextFormField(
-                        validator: (e) {
-                          if (e.isEmpty) {
-                            return "Masukkan Email";
-                          }
-                        },
-                        onSaved: (e) => email = e,
-                        decoration: InputDecoration(hintText: "Email"),
-                      ),
-                      TextFormField(
-                        validator: (e) {
-                          if (e.isEmpty) {
-                            return "Masukkan Password";
-                          }
-                        },
-                        obscureText: _obscureText,
-                        onSaved: (e) => password = e,
-                        decoration: InputDecoration(
-                            hintText: "Password",
-                            suffixIcon: IconButton(
-                              onPressed: _toggle,
-                              icon: Icon(_obscureText
-                                  ? Icons.visibility_off
-                                  : Icons.visibility),
-                            )),
-                      ),
-                      MaterialButton(
-                        onPressed: () {
-                          check();
-                        },
-                        child: Text("Login"),
-                      ),
-                      MaterialButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => RegPage()));
-                        },
-                        child: Text("Registrasi"),
-                      ),
-                    ],
+                      child: Padding(
+                    padding: const EdgeInsets.all(6.0),
+                    child: ListView(
+                      children: <Widget>[
+                        TextFormField(
+                            validator: (e) {
+                              if (e.isEmpty) {
+                                return "Masukkan Email";
+                              }
+                            },
+                            onSaved: (e) => email = e,
+                            decoration: InputDecoration(
+                                hintText: "Email",
+                                icon: Icon(Icons.mail),
+                                border: OutlineInputBorder())),
+                        TextFormField(
+                          validator: (e) {
+                            if (e.isEmpty) {
+                              return "Masukkan Password";
+                            }
+                          },
+                          obscureText: _obscureText,
+                          onSaved: (e) => password = e,
+                          decoration: InputDecoration(
+                              hintText: "Password",
+                              icon: Icon(Icons.vpn_key),
+                              border: OutlineInputBorder(),
+                              suffixIcon: IconButton(
+                                onPressed: _toggle,
+                                icon: Icon(_obscureText
+                                    ? Icons.visibility_off
+                                    : Icons.visibility),
+                              )),
+                        ),
+                        // MaterialButton(
+                        //   onPressed: () {
+                        //     check();
+                        //   },
+                        //   child: Text("Login"),
+                        // ),
+
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: ButtonWidget(
+                            onClick: () {
+                              check();
+                            },
+                            btnText: "Login",
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Belum punya akun? silahkan"),
+                            MaterialButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => RegPage()));
+                              },
+                              child: Text("Registrasi",
+                                  style: TextStyle(color: Colors.red)),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   )))
             ],
           ),
