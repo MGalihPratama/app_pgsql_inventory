@@ -5,6 +5,11 @@ import 'menu/kelola_menu.dart';
 import 'menu/histori_menu.dart';
 import 'menu/penjualan_menu.dart';
 import 'menu/perizinan_menu.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
 
 class HomePage extends StatefulWidget {
   @override
@@ -13,54 +18,104 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+  Future<String> getUserID() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var user = localStorage.getString("name");
+    return "$user";
+  }
+
+  _getToken() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var access_token = localStorage.getString('access_token');
+    return "$access_token";
+  }
+
+  _setHeaders() async => {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': ' Bearer ' + await _getToken()
+      };
+
+  Future getData() async {
+    var fullUrl = "http://inv-api-pgsql.herokuapp.com/api/product?user_id=" +
+        await getUserID();
+    //return await http.get(Uri.parse(fullUrl), headers: _setHeaders());
+    var response =
+        await http.get(Uri.parse(fullUrl), headers: await _setHeaders());
+
+    // final Map<String, dynamic> data = json.decode(response.body);
+    Map data = json.decode(response.body);
+    print(data);
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: new AppBar(
-        title: Text("Sistem Inventori"),
+        title: Row(
+          children: [
+            SizedBox(
+              width: 30.0,
+            ),
+            Text("Sistem Inventori")
+          ],
+        ),
         backgroundColor: orangeColors,
-      ),
-      drawer: new Drawer(
-          child: ListView(
-        children: <Widget>[
-          UserAccountsDrawerHeader(
-            decoration: BoxDecoration(
-                gradient: new LinearGradient(
-                    colors: [orangeLightColors, orangeColors]),
-                boxShadow: [
-                  new BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 20.0,
-                    spreadRadius: 1.0,
-                  )
-                ]),
-            accountName: new Text(
-              "Mr. X",
-              style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+        automaticallyImplyLeading: false,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.logout,
+              color: Colors.white,
             ),
-            accountEmail: new Text("x@admin.com"),
-            currentAccountPicture: CircleAvatar(
-              backgroundImage: NetworkImage(
-                  "https://image.freepik.com/free-icon/important-person_318-10744.jpg"),
-            ),
-          ),
-          ListTile(
-            leading: Icon(Icons.person),
-            title: Text("Profil"),
-          ),
-          ListTile(
-            leading: Icon(Icons.info),
-            title: Text("Tentang"),
-          ),
-          ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text("Keluar"),
-            onTap: () {
+            onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => LoginPage()));
             },
-          ),
+          )
         ],
-      )),
+      ),
+      // drawer: new Drawer(
+      //     child: ListView(
+      //   children: <Widget>[
+      //     UserAccountsDrawerHeader(
+      //       decoration: BoxDecoration(
+      //           gradient: new LinearGradient(
+      //               colors: [orangeLightColors, orangeColors]),
+      //           boxShadow: [
+      //             new BoxShadow(
+      //               color: Colors.grey,
+      //               blurRadius: 20.0,
+      //               spreadRadius: 1.0,
+      //             )
+      //           ]),
+      //       accountName: new Text(
+      //         "na",
+      //         style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+      //       ),
+      //       accountEmail: new Text("x@admin.com"),
+      //       currentAccountPicture: CircleAvatar(
+      //         backgroundImage: NetworkImage(
+      //             "https://image.freepik.com/free-icon/important-person_318-10744.jpg"),
+      //       ),
+      //     ),
+      //     ListTile(
+      //       leading: Icon(Icons.person),
+      //       title: Text("Profil"),
+      //     ),
+      //     ListTile(
+      //       leading: Icon(Icons.info),
+      //       title: Text("Tentang"),
+      //     ),
+      //     ListTile(
+      //       leading: Icon(Icons.exit_to_app),
+      //       title: Text("Keluar"),
+      //       onTap: () {
+      //         Navigator.push(context,
+      //             MaterialPageRoute(builder: (context) => LoginPage()));
+      //       },
+      //     ),
+      //   ],
+      // )),
       body: Container(
         padding: EdgeInsets.all(30.0),
         child: GridView.count(

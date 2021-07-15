@@ -81,7 +81,7 @@ class _RegPageState extends State<RegPage> {
                 flex: 1,
                 child: Container(
                   child: Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(8.0),
                     child: ListView(
                       children: <Widget>[
                         TextFormField(
@@ -96,6 +96,9 @@ class _RegPageState extends State<RegPage> {
                               border: OutlineInputBorder(),
                               icon: Icon(Icons.people)),
                         ),
+                        SizedBox(
+                          height: 10.0,
+                        ),
                         TextFormField(
                           validator: (e) {
                             if (e.isEmpty) {
@@ -107,6 +110,9 @@ class _RegPageState extends State<RegPage> {
                               hintText: "Email",
                               border: OutlineInputBorder(),
                               icon: Icon(Icons.mail)),
+                        ),
+                        SizedBox(
+                          height: 10.0,
                         ),
                         TextFormField(
                           validator: (e) {
@@ -127,6 +133,9 @@ class _RegPageState extends State<RegPage> {
                                     : Icons.visibility),
                               )),
                         ),
+                        SizedBox(
+                          height: 10.0,
+                        ),
                         TextFormField(
                           validator: (e) {
                             if (e.isEmpty) {
@@ -145,6 +154,9 @@ class _RegPageState extends State<RegPage> {
                                     ? Icons.visibility_off
                                     : Icons.visibility),
                               )),
+                        ),
+                        SizedBox(
+                          height: 10.0,
                         ),
                         // MaterialButton(
                         //   onPressed: () {

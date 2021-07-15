@@ -11,6 +11,7 @@ import 'dart:async';
 
 import '../home_page.dart';
 import 'item_card_penjualan.dart';
+import 'kelola_menu.dart';
 
 class PenjualanMenu extends StatefulWidget {
   @override
@@ -51,6 +52,41 @@ class _PenjualanMenuState extends State<PenjualanMenu> {
     Map data = json.decode(response.body);
     _listController.add(data);
     print(data);
+  }
+
+  JualStok(valueE) {
+    final form = _key.currentState;
+    if (form.validate()) {
+      form.save();
+      transaksi(valueE['id']);
+    }
+  }
+
+  Future transaksi(productID) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var user = localStorage.getString("user");
+    var fullUrl = "http://inv-api-pgsql.herokuapp.com/api/transaction";
+    var userdc = jsonDecode(user);
+    var msg = jsonEncode({
+      'user_id': userdc['id'],
+      'product_id': productID,
+      'stock': int.parse(stock),
+      'type': "pengeluaran",
+    });
+    var response = await http.post(Uri.parse(fullUrl),
+        body: msg, headers: await _setHeaders());
+
+    // final Map<String, dynamic> data = json.decode(response.body);
+    Map data = json.decode(response.body);
+    _listController.add(data);
+    print(data);
+    Fluttertoast.showToast(
+      msg: "Stok diJualkan",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+    );
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => PenjualanMenu()));
   }
 
   @override
@@ -142,7 +178,7 @@ class _PenjualanMenuState extends State<PenjualanMenu> {
                                 return "Masukan jumlah barang";
                               }
                             },
-                            onSaved: (e) => name = e,
+                            onSaved: (e) => stock = e,
                             decoration: InputDecoration(
                                 hintText: "banyak yang mau dijual"),
                           ),
@@ -162,6 +198,7 @@ class _PenjualanMenuState extends State<PenjualanMenu> {
                                 fontWeight: FontWeight.bold),
                           ),
                           onPressed: () {
+                            JualStok(valueE);
                             // nameController.text = '';
                             // hargaController.text = '';
                             // stokController.text = '';

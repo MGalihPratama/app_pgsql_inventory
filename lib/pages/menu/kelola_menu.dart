@@ -19,7 +19,7 @@ class KelolaMenu extends StatefulWidget {
 
 class _KelolaMenuState extends State<KelolaMenu> {
   StreamController _listController = StreamController();
-
+  String name, stock, price, id, type;
   _getUserID() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var user = localStorage.getString("user");
@@ -49,6 +49,41 @@ class _KelolaMenuState extends State<KelolaMenu> {
     Map data = json.decode(response.body);
     _listController.add(data);
     print(data);
+  }
+
+  TambahStok(valueE) {
+    final form = _key.currentState;
+    if (form.validate()) {
+      form.save();
+      transaksi(valueE['id']);
+    }
+  }
+
+  Future transaksi(productID) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var user = localStorage.getString("user");
+    var fullUrl = "http://inv-api-pgsql.herokuapp.com/api/transaction";
+    var userdc = jsonDecode(user);
+    var msg = jsonEncode({
+      'user_id': userdc['id'],
+      'product_id': productID,
+      'stock': int.parse(stock),
+      'type': "pemasukan",
+    });
+    var response = await http.post(Uri.parse(fullUrl),
+        body: msg, headers: await _setHeaders());
+
+    // final Map<String, dynamic> data = json.decode(response.body);
+    Map data = json.decode(response.body);
+    _listController.add(data);
+    print(data);
+    Fluttertoast.showToast(
+      msg: "Stok ditambahkan",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+    );
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => KelolaMenu()));
   }
 
   @override
@@ -167,8 +202,6 @@ class _KelolaMenuState extends State<KelolaMenu> {
           ],
         ));
   }
-
-  String name, stock, price, id;
 
   final _key = new GlobalKey<FormState>();
   TambahBarang() {
@@ -406,7 +439,7 @@ class _KelolaMenuState extends State<KelolaMenu> {
                                 return "Masukan nama Barang";
                               }
                             },
-                            onSaved: (e) => name = e,
+                            onSaved: (e) => stock = e,
                             decoration: InputDecoration(
                                 hintText: "banyak yang mau ditambah"),
                           ),
@@ -414,7 +447,7 @@ class _KelolaMenuState extends State<KelolaMenu> {
                       ],
                     ),
                     Container(
-                      width: 140,
+                      width: 150,
                       child: RaisedButton(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8)),
@@ -426,7 +459,7 @@ class _KelolaMenuState extends State<KelolaMenu> {
                                 fontWeight: FontWeight.bold),
                           ),
                           onPressed: () {
-                            update(valueE['id']);
+                            TambahStok(valueE);
 
                             // nameController.text = '';
                             // hargaController.text = '';

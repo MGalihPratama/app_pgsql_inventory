@@ -86,6 +86,9 @@ class _LoginPageState extends State<LoginPage> {
                                 hintText: "Email",
                                 icon: Icon(Icons.mail),
                                 border: OutlineInputBorder())),
+                        SizedBox(
+                          height: 10.0,
+                        ),
                         TextFormField(
                           validator: (e) {
                             if (e.isEmpty) {
