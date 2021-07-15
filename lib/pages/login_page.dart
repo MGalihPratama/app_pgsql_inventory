@@ -15,6 +15,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   String email, password;
+  bool _isLoading = false;
 
   final _key = new GlobalKey<FormState>();
 
@@ -37,12 +38,19 @@ class _LoginPageState extends State<LoginPage> {
 
     if (data["message"] == "Invalid Credentials") {
       // return "gagal";
+
       Fluttertoast.showToast(
         msg: "Email atau Password salah",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
       );
+      setState(() {
+        _isLoading = false;
+      });
     } else {
+      setState(() {
+        _isLoading = false;
+      });
       SharedPreferences localStorage = await SharedPreferences.getInstance();
       localStorage.setString('access_token', data['access_token']);
       localStorage.setString('user', json.encode(data['user']));
@@ -65,86 +73,84 @@ class _LoginPageState extends State<LoginPage> {
         key: _key,
         child: Container(
           padding: EdgeInsets.only(bottom: 30),
-          child: Column(
-            children: <Widget>[
-              HeaderContainer("Login"),
-              Expanded(
-                  flex: 1,
-                  child: Container(
-                      child: Padding(
-                    padding: const EdgeInsets.all(6.0),
-                    child: ListView(
-                      children: <Widget>[
-                        TextFormField(
-                            validator: (e) {
-                              if (e.isEmpty) {
-                                return "Masukkan Email";
-                              }
-                            },
-                            onSaved: (e) => email = e,
-                            decoration: InputDecoration(
-                                hintText: "Email",
-                                icon: Icon(Icons.mail),
-                                border: OutlineInputBorder())),
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        TextFormField(
-                          validator: (e) {
-                            if (e.isEmpty) {
-                              return "Masukkan Password";
-                            }
-                          },
-                          obscureText: _obscureText,
-                          onSaved: (e) => password = e,
-                          decoration: InputDecoration(
-                              hintText: "Password",
-                              icon: Icon(Icons.vpn_key),
-                              border: OutlineInputBorder(),
-                              suffixIcon: IconButton(
-                                onPressed: _toggle,
-                                icon: Icon(_obscureText
-                                    ? Icons.visibility_off
-                                    : Icons.visibility),
-                              )),
-                        ),
-                        // MaterialButton(
-                        //   onPressed: () {
-                        //     check();
-                        //   },
-                        //   child: Text("Login"),
-                        // ),
-
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: ButtonWidget(
-                            onClick: () {
-                              check();
-                            },
-                            btnText: "Login",
+          child: _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : (Column(
+                  children: <Widget>[
+                    HeaderContainer("Login"),
+                    Expanded(
+                        flex: 1,
+                        child: Container(
+                            child: Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: ListView(
+                            children: <Widget>[
+                              TextFormField(
+                                  validator: (e) {
+                                    if (e.isEmpty) {
+                                      return "Masukkan Email";
+                                    }
+                                  },
+                                  onSaved: (e) => email = e,
+                                  decoration: InputDecoration(
+                                      hintText: "Email",
+                                      icon: Icon(Icons.mail),
+                                      border: OutlineInputBorder())),
+                              SizedBox(
+                                height: 10.0,
+                              ),
+                              TextFormField(
+                                validator: (e) {
+                                  if (e.isEmpty) {
+                                    return "Masukkan Password";
+                                  }
+                                },
+                                obscureText: _obscureText,
+                                onSaved: (e) => password = e,
+                                decoration: InputDecoration(
+                                    hintText: "Password",
+                                    icon: Icon(Icons.vpn_key),
+                                    border: OutlineInputBorder(),
+                                    suffixIcon: IconButton(
+                                      onPressed: _toggle,
+                                      icon: Icon(_obscureText
+                                          ? Icons.visibility_off
+                                          : Icons.visibility),
+                                    )),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 10.0),
+                                child: ButtonWidget(
+                                  onClick: () {
+                                    setState(() {
+                                      _isLoading = true;
+                                    });
+                                    check();
+                                  },
+                                  btnText: "Login",
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("Belum punya akun? silahkan"),
+                                  MaterialButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => RegPage()));
+                                    },
+                                    child: Text("Registrasi",
+                                        style: TextStyle(color: Colors.red)),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("Belum punya akun? silahkan"),
-                            MaterialButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => RegPage()));
-                              },
-                              child: Text("Registrasi",
-                                  style: TextStyle(color: Colors.red)),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  )))
-            ],
-          ),
+                        )))
+                  ],
+                )),
         ),
       ),
     );

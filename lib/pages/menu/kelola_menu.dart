@@ -190,7 +190,12 @@ class _KelolaMenuState extends State<KelolaMenu> {
                             .toList(),
                       );
                     } else {
-                      return Center(child: Text("Loading...."));
+                      return SizedBox(
+                        height: MediaQuery.of(context).size.height / 1.3,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
                     }
                   },
                 ),
