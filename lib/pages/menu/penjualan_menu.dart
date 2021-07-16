@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:inventori/pages/menu/item_card.dart';
 import 'package:inventori/utils/color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,7 +9,6 @@ import 'dart:async';
 
 import '../home_page.dart';
 import 'item_card_penjualan.dart';
-import 'kelola_menu.dart';
 
 class PenjualanMenu extends StatefulWidget {
   @override
@@ -142,7 +139,12 @@ class _PenjualanMenuState extends State<PenjualanMenu> {
                             .toList(),
                       );
                     } else {
-                      return Center(child: Text("Loading...."));
+                      return SizedBox(
+                        height: MediaQuery.of(context).size.height / 1.3,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
                     }
                   },
                 ),
