@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:inventori/pages/menu/page_histori/pembelian.dart';
-import 'package:inventori/pages/menu/page_histori/penjualan.dart';
+import 'package:inventori/pages/menu/kelola_menu.dart';
+import 'package:inventori/pages/menu/penjualan_menu.dart';
+import 'package:inventori/pages/menu/perizinan_menu.dart';
 import 'package:inventori/utils/color.dart';
 
-class HistoriMenu extends StatefulWidget {
+class HistoriPembelian extends StatefulWidget {
   @override
-  _HistoriMenuState createState() => _HistoriMenuState();
+  _HistoriPembelianState createState() => _HistoriPembelianState();
 }
 
-class _HistoriMenuState extends State<HistoriMenu> {
+class _HistoriPembelianState extends State<HistoriPembelian> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: new AppBar(
-        title: Text("Histori"),
+        title: Text("Histori Tambah Stok Barang"),
         backgroundColor: orangeColors,
       ),
       body: Container(
@@ -25,10 +26,8 @@ class _HistoriMenuState extends State<HistoriMenu> {
               margin: EdgeInsets.all(10.0),
               child: InkWell(
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => HistoriPembelian()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => KelolaMenu()));
                 },
                 splashColor: orangeLightColors,
                 child: Center(
@@ -50,10 +49,8 @@ class _HistoriMenuState extends State<HistoriMenu> {
               margin: EdgeInsets.all(10.0),
               child: InkWell(
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => HistoriPenjualan()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => PenjualanMenu()));
                 },
                 splashColor: orangeLightColors,
                 child: Center(

@@ -47,7 +47,7 @@ class ItemCardPenjualan extends StatelessWidget {
                 width: 60,
                 child: RaisedButton(
                     shape: CircleBorder(),
-                    color: Colors.yellow[900],
+                    color: Colors.grey,
                     child: Center(
                         child: Icon(
                       Icons.add_shopping_cart_outlined,
