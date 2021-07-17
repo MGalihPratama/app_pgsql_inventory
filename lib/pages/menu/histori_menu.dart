@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:inventori/pages/home_page.dart';
 import 'package:inventori/pages/menu/page_histori/pembelian.dart';
 import 'package:inventori/pages/menu/page_histori/penjualan.dart';
 import 'package:inventori/utils/color.dart';
@@ -13,6 +14,14 @@ class _HistoriMenuState extends State<HistoriMenu> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: new AppBar(
+        automaticallyImplyLeading: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomePage()));
+          },
+        ),
         title: Text("Histori"),
         backgroundColor: orangeColors,
       ),

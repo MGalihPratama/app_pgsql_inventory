@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:inventori/pages/menu/kelola_menu.dart';
-import 'package:inventori/pages/menu/penjualan_menu.dart';
-import 'package:inventori/pages/menu/perizinan_menu.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:inventori/pages/menu/histori_menu.dart';
+import 'package:inventori/pages/menu/page_histori/penjualan.dart';
 import 'package:inventori/utils/color.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
+
+import 'item_card_hp.dart';
 
 class HistoriPembelian extends StatefulWidget {
   @override
@@ -10,67 +17,101 @@ class HistoriPembelian extends StatefulWidget {
 }
 
 class _HistoriPembelianState extends State<HistoriPembelian> {
+  StreamController _listController = StreamController();
+  String name, stock, price, id;
+
+  _getUserID() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var user = localStorage.getString("user");
+    return "$user['user_id']";
+  }
+
+  _getToken() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var access_token = localStorage.getString('access_token');
+    return "$access_token";
+  }
+
+  _setHeaders() async => {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': ' Bearer ' + await _getToken()
+      };
+
+  Future getData() async {
+    var fullUrl = "http://inv-api-pgsql.herokuapp.com/api/product?user_id=" +
+        await _getUserID();
+    //return await http.get(Uri.parse(fullUrl), headers: _setHeaders());
+    var response =
+        await http.get(Uri.parse(fullUrl), headers: await _setHeaders());
+
+    // final Map<String, dynamic> data = json.decode(response.body);
+    Map data = json.decode(response.body);
+    _listController.add(data);
+    print(data);
+  }
+
+  @override
+  void initState() {
+    getData();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: new AppBar(
-        title: Text("Histori Tambah Stok Barang"),
-        backgroundColor: orangeColors,
-      ),
-      body: Container(
-        padding: EdgeInsets.all(30.0),
-        child: GridView.count(
-          crossAxisCount: 2,
-          children: <Widget>[
-            Card(
-              margin: EdgeInsets.all(10.0),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => KelolaMenu()));
-                },
-                splashColor: orangeLightColors,
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Icon(
-                        Icons.add_business,
-                        color: Colors.blue,
-                        size: 70.0,
-                      ),
-                      Text("Pembelian", style: new TextStyle(fontSize: 17.0))
-                    ],
-                  ),
+        appBar: AppBar(
+          backgroundColor: orangeColors,
+          automaticallyImplyLeading: true,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => HistoriMenu()));
+            },
+          ),
+          title: Text('Histori Pembelian Barang'),
+        ),
+        backgroundColor: Colors.white,
+        body: Stack(
+          children: [
+            ListView(
+              children: [
+                StreamBuilder(
+                  stream: _listController.stream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      var lst = snapshot.data['products'];
+                      return Column(
+                        children: lst
+                            .map<Widget>((e) => ItemCardHp(
+                                e['name'],
+                                e['price'].toString(),
+                                e['stock'].toString(),
+                                e['date']))
+                            .toList(),
+                      );
+                    } else {
+                      return SizedBox(
+                        height: MediaQuery.of(context).size.height / 1.3,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                  },
                 ),
-              ),
-            ),
-            Card(
-              margin: EdgeInsets.all(10.0),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => PenjualanMenu()));
-                },
-                splashColor: orangeLightColors,
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Icon(
-                        Icons.add_shopping_cart,
-                        color: Colors.grey,
-                        size: 70.0,
-                      ),
-                      Text("Penjualan", style: new TextStyle(fontSize: 17.0))
-                    ],
-                  ),
-                ),
-              ),
+                SizedBox(
+                  height: 150,
+                )
+              ],
             ),
           ],
-        ),
-      ),
-    );
+        ));
   }
 }
