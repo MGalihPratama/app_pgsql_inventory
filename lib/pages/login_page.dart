@@ -52,6 +52,7 @@ class _LoginPageState extends State<LoginPage> {
         _isLoading = false;
       });
       SharedPreferences localStorage = await SharedPreferences.getInstance();
+      localStorage.setString('email', email);
       localStorage.setString('access_token', data['access_token']);
       localStorage.setString('user', json.encode(data['user']));
       Navigator.push(

@@ -24,6 +24,35 @@ class _HomePageState extends State<HomePage> {
     return "$user";
   }
 
+  String email = "";
+  Future checkLogin() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    setState(() {
+      email = localStorage.getString('email');
+    });
+  }
+
+  Future logOut(BuildContext context) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    localStorage.remove('email');
+    Fluttertoast.showToast(
+      msg: "Berhasil keluar",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+    );
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginPage(),
+        ));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkLogin();
+  }
+
   _getToken() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var access_token = localStorage.getString('access_token');
@@ -68,8 +97,7 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
             ),
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => LoginPage()));
+              logOut(context);
             },
           )
         ],
