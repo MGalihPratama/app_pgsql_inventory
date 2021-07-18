@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:inventori/pages/menu/histori_menu.dart';
-import 'package:inventori/pages/menu/page_histori/penjualan.dart';
 import 'package:inventori/utils/color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -19,7 +16,11 @@ class HistoriPembelian extends StatefulWidget {
 class _HistoriPembelianState extends State<HistoriPembelian> {
   StreamController _listController = StreamController();
   String name, stock, price, id;
+  TextEditingController sc = TextEditingController();
+  String searchString = "";
 
+  Icon cusIcon = Icon(Icons.search);
+  Widget cusSearchBar = Text("Histori Pembelian Barang");
   _getUserID() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var user = localStorage.getString("user");
@@ -65,17 +66,44 @@ class _HistoriPembelianState extends State<HistoriPembelian> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: orangeColors,
-          automaticallyImplyLeading: true,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => HistoriMenu()));
-            },
-          ),
-          title: Text('Histori Pembelian Barang'),
-        ),
+            backgroundColor: orangeColors,
+            automaticallyImplyLeading: true,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HistoriMenu()));
+              },
+            ),
+            title: cusSearchBar,
+            actions: <Widget>[
+              IconButton(
+                icon: cusIcon,
+                onPressed: () {
+                  setState(() {
+                    if (this.cusIcon.icon == Icons.search) {
+                      this.cusIcon = Icon(Icons.cancel);
+                      this.cusSearchBar = TextField(
+                        onChanged: (value) {
+                          setState(() {
+                            searchString = value.toLowerCase();
+                          });
+                        },
+                        textInputAction: TextInputAction.go,
+                        style: TextStyle(color: Colors.white, fontSize: 16.0),
+                        decoration: InputDecoration(
+                            hintText: "Nama Barang",
+                            hintStyle: TextStyle(color: Colors.white)),
+                      );
+                    } else {
+                      this.cusIcon = Icon(Icons.search);
+                      this.cusSearchBar = Text("Histori Pembelian Barang");
+                      this.searchString = "";
+                    }
+                  });
+                },
+              ),
+            ]),
         backgroundColor: Colors.white,
         body: Stack(
           children: [
@@ -88,12 +116,16 @@ class _HistoriPembelianState extends State<HistoriPembelian> {
                       var lst = snapshot.data['transactions_in'];
                       return Column(
                         children: lst
-                            .map<Widget>((e) => ItemCardHp(
-                                e['product']['name'],
-                                e['product']['price'].toString(),
-                                e['product']['stock'].toString(),
-                                e['stock'].toString(),
-                                e['created_at'].toString()))
+                            .map<Widget>((e) => (e['product']['name']
+                                    .toLowerCase()
+                                    .contains(searchString))
+                                ? ItemCardHp(
+                                    e['product']['name'],
+                                    e['product']['price'].toString(),
+                                    e['product']['stock'].toString(),
+                                    e['stock'].toString(),
+                                    e['created_at'].toString())
+                                : Container())
                             .toList(),
                       );
                     } else {

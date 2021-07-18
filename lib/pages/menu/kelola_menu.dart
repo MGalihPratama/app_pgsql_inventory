@@ -19,10 +19,10 @@ class _KelolaMenuState extends State<KelolaMenu> {
   StreamController _listController = StreamController();
   TextEditingController sc = TextEditingController();
   String searchString = "";
-  String name, stock, price, id, type;
+
   Icon cusIcon = Icon(Icons.search);
   Widget cusSearchBar = Text("Kelola Barang");
-
+  String name, stock, price, id, type;
   _getUserID() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var user = localStorage.getString("user");
@@ -154,6 +154,7 @@ class _KelolaMenuState extends State<KelolaMenu> {
                   } else {
                     this.cusIcon = Icon(Icons.search);
                     this.cusSearchBar = Text("Kelola Barang");
+                    this.searchString = "";
                   }
                 });
               },

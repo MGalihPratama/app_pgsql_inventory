@@ -19,6 +19,11 @@ class _PenjualanMenuState extends State<PenjualanMenu> {
   StreamController _listController = StreamController();
   String name, stock, price, id;
 
+  String searchString = "";
+  TextEditingController sc = TextEditingController();
+  Icon cusIcon = Icon(Icons.search);
+  Widget cusSearchBar = Text("Penjualan");
+
   final _key = new GlobalKey<FormState>();
   _getUserID() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -101,17 +106,44 @@ class _PenjualanMenuState extends State<PenjualanMenu> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: orangeColors,
-          automaticallyImplyLeading: true,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => HomePage()));
-            },
-          ),
-          title: Text('Penjualan'),
-        ),
+            backgroundColor: orangeColors,
+            automaticallyImplyLeading: true,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HomePage()));
+              },
+            ),
+            title: cusSearchBar,
+            actions: <Widget>[
+              IconButton(
+                icon: cusIcon,
+                onPressed: () {
+                  setState(() {
+                    if (this.cusIcon.icon == Icons.search) {
+                      this.cusIcon = Icon(Icons.cancel);
+                      this.cusSearchBar = TextField(
+                        onChanged: (value) {
+                          setState(() {
+                            searchString = value.toLowerCase();
+                          });
+                        },
+                        textInputAction: TextInputAction.go,
+                        style: TextStyle(color: Colors.white, fontSize: 16.0),
+                        decoration: InputDecoration(
+                            hintText: "Nama Barang",
+                            hintStyle: TextStyle(color: Colors.white)),
+                      );
+                    } else {
+                      this.cusIcon = Icon(Icons.search);
+                      this.cusSearchBar = Text("Penjualan");
+                      this.searchString = "";
+                    }
+                  });
+                },
+              ),
+            ]),
         backgroundColor: Colors.white,
         body: Stack(
           children: [
@@ -124,18 +156,23 @@ class _PenjualanMenuState extends State<PenjualanMenu> {
                       var lst = snapshot.data['products'];
                       return Column(
                         children: lst
-                            .map<Widget>((e) => ItemCardPenjualan(
-                                  e['name'],
-                                  e['price'].toString(),
-                                  e['stock'].toString(),
-                                  jual: () {
-                                    AlertJual(context, e).then((onValue) {
-                                      Scaffold.of(context).showSnackBar(
-                                          SnackBar(
-                                              content: Text("Hello $onValue")));
-                                    });
-                                  },
-                                ))
+                            .map<Widget>((e) => (e['name']
+                                    .toLowerCase()
+                                    .contains(searchString))
+                                ? ItemCardPenjualan(
+                                    e['name'],
+                                    e['price'].toString(),
+                                    e['stock'].toString(),
+                                    jual: () {
+                                      AlertJual(context, e).then((onValue) {
+                                        Scaffold.of(context).showSnackBar(
+                                            SnackBar(
+                                                content:
+                                                    Text("Hello $onValue")));
+                                      });
+                                    },
+                                  )
+                                : Container())
                             .toList(),
                       );
                     } else {

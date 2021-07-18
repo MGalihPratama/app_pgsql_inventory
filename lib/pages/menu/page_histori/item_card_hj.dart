@@ -48,9 +48,9 @@ class ItemCardHj extends StatelessWidget {
           Row(
             children: [
               SizedBox(
-                height: 40,
+                height: 70,
                 width: 100,
-                child: Text("Tanggal : $date"),
+                child: Text("waktu : $date"),
               ),
             ],
           )
