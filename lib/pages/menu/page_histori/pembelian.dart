@@ -39,8 +39,7 @@ class _HistoriPembelianState extends State<HistoriPembelian> {
       };
 
   Future getData() async {
-    var fullUrl = "http://inv-api-pgsql.herokuapp.com/api/product?user_id=" +
-        await _getUserID();
+    var fullUrl = "http://inv-api-pgsql.herokuapp.com/api/transaction";
     //return await http.get(Uri.parse(fullUrl), headers: _setHeaders());
     var response =
         await http.get(Uri.parse(fullUrl), headers: await _setHeaders());
@@ -86,14 +85,15 @@ class _HistoriPembelianState extends State<HistoriPembelian> {
                   stream: _listController.stream,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      var lst = snapshot.data['products'];
+                      var lst = snapshot.data['transactions_in'];
                       return Column(
                         children: lst
                             .map<Widget>((e) => ItemCardHp(
-                                e['name'],
-                                e['price'].toString(),
+                                e['product']['name'],
+                                e['product']['price'].toString(),
+                                e['product']['stock'].toString(),
                                 e['stock'].toString(),
-                                e['date']))
+                                e['created_at'].toString()))
                             .toList(),
                       );
                     } else {

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:inventori/pages/menu/histori_menu.dart';
+import 'package:inventori/pages/menu/page_histori/item_card_hj.dart';
+import 'package:inventori/pages/menu/page_histori/penjualan.dart';
 import 'package:inventori/utils/color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -7,10 +10,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
-import '../../home_page.dart';
-import '../histori_menu.dart';
-import '../item_card_penjualan.dart';
-import 'item_card_hj.dart';
+import 'item_card_hp.dart';
 
 class HistoriPenjualan extends StatefulWidget {
   @override
@@ -21,7 +21,6 @@ class _HistoriPenjualanState extends State<HistoriPenjualan> {
   StreamController _listController = StreamController();
   String name, stock, price, id;
 
-  final _key = new GlobalKey<FormState>();
   _getUserID() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var user = localStorage.getString("user");
@@ -41,8 +40,7 @@ class _HistoriPenjualanState extends State<HistoriPenjualan> {
       };
 
   Future getData() async {
-    var fullUrl = "http://inv-api-pgsql.herokuapp.com/api/product?user_id=" +
-        await _getUserID();
+    var fullUrl = "http://inv-api-pgsql.herokuapp.com/api/transaction";
     //return await http.get(Uri.parse(fullUrl), headers: _setHeaders());
     var response =
         await http.get(Uri.parse(fullUrl), headers: await _setHeaders());
@@ -51,41 +49,6 @@ class _HistoriPenjualanState extends State<HistoriPenjualan> {
     Map data = json.decode(response.body);
     _listController.add(data);
     print(data);
-  }
-
-  JualStok(valueE) {
-    final form = _key.currentState;
-    if (form.validate()) {
-      form.save();
-      transaksi(valueE['id']);
-    }
-  }
-
-  Future transaksi(productID) async {
-    SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var user = localStorage.getString("user");
-    var fullUrl = "http://inv-api-pgsql.herokuapp.com/api/transaction";
-    var userdc = jsonDecode(user);
-    var msg = jsonEncode({
-      'user_id': userdc['id'],
-      'product_id': productID,
-      'stock': int.parse(stock),
-      'type': "pengeluaran",
-    });
-    var response = await http.post(Uri.parse(fullUrl),
-        body: msg, headers: await _setHeaders());
-
-    // final Map<String, dynamic> data = json.decode(response.body);
-    Map data = json.decode(response.body);
-    _listController.add(data);
-    print(data);
-    Fluttertoast.showToast(
-      msg: "Stok diJualkan",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-    );
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => HistoriPenjualan()));
   }
 
   @override
@@ -123,14 +86,15 @@ class _HistoriPenjualanState extends State<HistoriPenjualan> {
                   stream: _listController.stream,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      var lst = snapshot.data['products'];
+                      var lst = snapshot.data['transactions_out'];
                       return Column(
                         children: lst
                             .map<Widget>((e) => ItemCardHj(
-                                e['name'],
-                                e['price'].toString(),
+                                e['product']['name'],
+                                e['product']['price'].toString(),
+                                e['product']['stock'].toString(),
                                 e['stock'].toString(),
-                                e['date']))
+                                e['created_at'].toString()))
                             .toList(),
                       );
                     } else {
@@ -150,74 +114,5 @@ class _HistoriPenjualanState extends State<HistoriPenjualan> {
             ),
           ],
         ));
-  }
-
-  Future<String> AlertJual(BuildContext context, valueE) {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return Form(
-            key: _key,
-            child: AlertDialog(
-              title: Text("Penjualan Barang"),
-              content: Container(
-                height: 200,
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text(valueE['stock'].toString() + " - "),
-                        Flexible(
-                          child: TextFormField(
-                            // initialValue: valueE['stock'].toString(),
-                            validator: (e) {
-                              if (e.isEmpty) {
-                                return "Masukan jumlah barang";
-                              }
-                            },
-                            onSaved: (e) => stock = e,
-                            decoration: InputDecoration(
-                                hintText: "banyak yang mau dijual"),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      width: 140,
-                      child: RaisedButton(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8)),
-                          color: Colors.orange,
-                          child: Text(
-                            'Jual Barang',
-                            style: GoogleFonts.poppins(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          onPressed: () {
-                            JualStok(valueE);
-                            // nameController.text = '';
-                            // hargaController.text = '';
-                            // stokController.text = '';
-                          }),
-                    ),
-                  ],
-                ),
-              ),
-              actions: <Widget>[
-                Container(
-                  height: 25,
-                  child: new FlatButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    textColor: Theme.of(context).primaryColor,
-                    child: const Text('Tutup'),
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
   }
 }

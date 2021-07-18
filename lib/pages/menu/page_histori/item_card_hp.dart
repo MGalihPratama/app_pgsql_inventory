@@ -5,9 +5,10 @@ class ItemCardHp extends StatelessWidget {
   final String name;
   final String price;
   final String stock;
+  final String inputStock;
   final String date;
 
-  ItemCardHp(this.name, this.price, this.stock, this.date);
+  ItemCardHp(this.name, this.price, this.stock, this.inputStock, this.date);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,11 @@ class ItemCardHp extends StatelessWidget {
                         fontWeight: FontWeight.w600, fontSize: 16)),
               ),
               Text(
-                "Stok : $stock ",
+                "Input stok : $inputStock ",
+                style: GoogleFonts.poppins(),
+              ),
+              Text(
+                "Stok saat ini : $stock ",
                 style: GoogleFonts.poppins(),
               ),
               Text(
@@ -43,9 +48,9 @@ class ItemCardHp extends StatelessWidget {
           Row(
             children: [
               SizedBox(
-                height: 40,
-                width: 60,
-                child: Text("Tanggal : $date"),
+                height: 70,
+                width: 100,
+                child: Text("waktu: $date"),
               ),
             ],
           )

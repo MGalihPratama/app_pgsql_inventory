@@ -17,7 +17,12 @@ class KelolaMenu extends StatefulWidget {
 
 class _KelolaMenuState extends State<KelolaMenu> {
   StreamController _listController = StreamController();
+  TextEditingController sc = TextEditingController();
+  String searchString = "";
   String name, stock, price, id, type;
+  Icon cusIcon = Icon(Icons.search);
+  Widget cusSearchBar = Text("Kelola Barang");
+
   _getUserID() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     var user = localStorage.getString("user");
@@ -126,8 +131,33 @@ class _KelolaMenuState extends State<KelolaMenu> {
                   context, MaterialPageRoute(builder: (context) => HomePage()));
             },
           ),
-          title: Text('Kelola Barang'),
+          title: cusSearchBar,
           actions: <Widget>[
+            IconButton(
+              icon: cusIcon,
+              onPressed: () {
+                setState(() {
+                  if (this.cusIcon.icon == Icons.search) {
+                    this.cusIcon = Icon(Icons.cancel);
+                    this.cusSearchBar = TextField(
+                      onChanged: (value) {
+                        setState(() {
+                          searchString = value.toLowerCase();
+                        });
+                      },
+                      textInputAction: TextInputAction.go,
+                      style: TextStyle(color: Colors.white, fontSize: 16.0),
+                      decoration: InputDecoration(
+                          hintText: "Nama Barang",
+                          hintStyle: TextStyle(color: Colors.white)),
+                    );
+                  } else {
+                    this.cusIcon = Icon(Icons.search);
+                    this.cusSearchBar = Text("Kelola Barang");
+                  }
+                });
+              },
+            ),
             IconButton(
               icon: Icon(
                 Icons.add_outlined,
@@ -153,38 +183,46 @@ class _KelolaMenuState extends State<KelolaMenu> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       var lst = snapshot.data['products'];
+
                       return Column(
                         children: lst
-                            .map<Widget>((e) => ItemCard(
-                                  e['name'],
-                                  e['price'].toString(),
-                                  e['stock'].toString(),
-                                  onDelete: () {
-                                    // users.doc(e.id).delete();
-                                    print(e['id']);
-                                    // hapus(e);
-                                    DeleteAlert(context, e).then((onValue) {
-                                      Scaffold.of(context).showSnackBar(
-                                          SnackBar(
-                                              content: Text("Hello $onValue")));
-                                    });
-                                  },
-                                  stok: () {
-                                    AlertStok(context, e).then((onValue) {
-                                      Scaffold.of(context).showSnackBar(
-                                          SnackBar(
-                                              content: Text("Hello $onValue")));
-                                    });
-                                  },
-                                  onUpdate: () {
-                                    print(e['name']);
-                                    AlertUpdate(context, e).then((onValue) {
-                                      Scaffold.of(context).showSnackBar(
-                                          SnackBar(
-                                              content: Text("Hello $onValue")));
-                                    });
-                                  },
-                                ))
+                            .map<Widget>((e) => (e['name']
+                                    .toLowerCase()
+                                    .contains(searchString))
+                                ? ItemCard(
+                                    e['name'],
+                                    e['price'].toString(),
+                                    e['stock'].toString(),
+                                    onDelete: () {
+                                      // users.doc(e.id).delete();
+                                      print(e['id']);
+                                      // hapus(e);
+                                      DeleteAlert(context, e).then((onValue) {
+                                        Scaffold.of(context).showSnackBar(
+                                            SnackBar(
+                                                content:
+                                                    Text("Hello $onValue")));
+                                      });
+                                    },
+                                    stok: () {
+                                      AlertStok(context, e).then((onValue) {
+                                        Scaffold.of(context).showSnackBar(
+                                            SnackBar(
+                                                content:
+                                                    Text("Hello $onValue")));
+                                      });
+                                    },
+                                    onUpdate: () {
+                                      print(e['name']);
+                                      AlertUpdate(context, e).then((onValue) {
+                                        Scaffold.of(context).showSnackBar(
+                                            SnackBar(
+                                                content:
+                                                    Text("Hello $onValue")));
+                                      });
+                                    },
+                                  )
+                                : Container())
                             .toList(),
                       );
                     } else {
@@ -207,6 +245,7 @@ class _KelolaMenuState extends State<KelolaMenu> {
   }
 
   final _key = new GlobalKey<FormState>();
+
   TambahBarang() {
     final form = _key.currentState;
     if (form.validate()) {
