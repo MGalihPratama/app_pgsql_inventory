@@ -78,129 +78,136 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: new AppBar(
-        title: Row(
-          children: [
-            SizedBox(
-              width: 30.0,
-            ),
-            Text("Sistem Inventori")
+    return new WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: new AppBar(
+          title: Row(
+            children: [
+              SizedBox(
+                width: 30.0,
+              ),
+              Text("Sistem Inventori")
+            ],
+          ),
+          backgroundColor: orangeColors,
+          automaticallyImplyLeading: false,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.logout,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                logOut(context);
+              },
+            )
           ],
         ),
-        backgroundColor: orangeColors,
-        automaticallyImplyLeading: false,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.logout,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              logOut(context);
-            },
-          )
-        ],
-      ),
-      body: Container(
-        padding: EdgeInsets.all(30.0),
-        child: GridView.count(
-          crossAxisCount: 2,
-          children: <Widget>[
-            Card(
-              margin: EdgeInsets.all(10.0),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => KelolaMenu()));
-                },
-                splashColor: orangeLightColors,
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Icon(
-                        Icons.add_business,
-                        color: Colors.orange,
-                        size: 70.0,
-                      ),
-                      Text("Kelola Barang",
-                          style: new TextStyle(fontSize: 17.0))
-                    ],
+        body: Container(
+          padding: EdgeInsets.all(30.0),
+          child: GridView.count(
+            crossAxisCount: 2,
+            children: <Widget>[
+              Card(
+                margin: EdgeInsets.all(10.0),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => KelolaMenu()));
+                  },
+                  splashColor: orangeLightColors,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(
+                          Icons.add_business,
+                          color: Colors.orange,
+                          size: 70.0,
+                        ),
+                        Text("Kelola Barang",
+                            style: new TextStyle(fontSize: 17.0))
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Card(
-              margin: EdgeInsets.all(10.0),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => PenjualanMenu()));
-                },
-                splashColor: orangeLightColors,
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Icon(
-                        Icons.add_shopping_cart,
-                        color: Colors.grey,
-                        size: 70.0,
-                      ),
-                      Text("Penjualan", style: new TextStyle(fontSize: 17.0))
-                    ],
+              Card(
+                margin: EdgeInsets.all(10.0),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PenjualanMenu()));
+                  },
+                  splashColor: orangeLightColors,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(
+                          Icons.add_shopping_cart,
+                          color: Colors.grey,
+                          size: 70.0,
+                        ),
+                        Text("Penjualan", style: new TextStyle(fontSize: 17.0))
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Card(
-              margin: EdgeInsets.all(10.0),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => PerizinanMenu()));
-                },
-                splashColor: orangeLightColors,
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Icon(
-                        Icons.admin_panel_settings,
-                        color: Colors.lightGreen,
-                        size: 70.0,
-                      ),
-                      Text("Perizinan", style: new TextStyle(fontSize: 17.0))
-                    ],
+              Card(
+                margin: EdgeInsets.all(10.0),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PerizinanMenu()));
+                  },
+                  splashColor: orangeLightColors,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(
+                          Icons.admin_panel_settings,
+                          color: Colors.lightGreen,
+                          size: 70.0,
+                        ),
+                        Text("Perizinan", style: new TextStyle(fontSize: 17.0))
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Card(
-              margin: EdgeInsets.all(10.0),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => HistoriMenu()));
-                },
-                splashColor: orangeLightColors,
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Icon(
-                        Icons.history_outlined,
-                        color: Colors.blue,
-                        size: 70.0,
-                      ),
-                      Text("Histori", style: new TextStyle(fontSize: 17.0))
-                    ],
+              Card(
+                margin: EdgeInsets.all(10.0),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HistoriMenu()));
+                  },
+                  splashColor: orangeLightColors,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(
+                          Icons.history_outlined,
+                          color: Colors.blue,
+                          size: 70.0,
+                        ),
+                        Text("Histori", style: new TextStyle(fontSize: 17.0))
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
