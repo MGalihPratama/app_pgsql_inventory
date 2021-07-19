@@ -14,7 +14,7 @@ class _PerizinanMenuState extends State<PerizinanMenu> {
         title: Text("Perizinan"),
         backgroundColor: orangeColors,
       ),
-      body: Text("Perizinan"),
+      body: Center(child: Text("Coming Soon...")),
     );
   }
 }

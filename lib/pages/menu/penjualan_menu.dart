@@ -82,13 +82,25 @@ class _PenjualanMenuState extends State<PenjualanMenu> {
     Map data = json.decode(response.body);
     _listController.add(data);
     print(data);
-    Fluttertoast.showToast(
-      msg: "Stok diJualkan",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-    );
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => PenjualanMenu()));
+    if (data["message"] == "Created Successfully") {
+      // return "gagal";
+
+      Fluttertoast.showToast(
+        msg: "Stok diJualkan",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => PenjualanMenu()));
+    } else {
+      Fluttertoast.showToast(
+        msg: "Stok barang kurang",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => PenjualanMenu()));
+    }
   }
 
   @override

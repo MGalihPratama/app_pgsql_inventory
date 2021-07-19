@@ -45,7 +45,7 @@ class _HistoriMenuState extends State<HistoriMenu> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Icon(
-                        Icons.add_business,
+                        Icons.history_edu,
                         color: Colors.blue,
                         size: 70.0,
                       ),
