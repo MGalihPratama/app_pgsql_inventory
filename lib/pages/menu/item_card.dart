@@ -29,7 +29,7 @@ class ItemCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.5,
+                width: MediaQuery.of(context).size.width * 0.35,
                 child: Text(name,
                     style: GoogleFonts.poppins(
                         fontWeight: FontWeight.w600, fontSize: 16)),
@@ -90,7 +90,7 @@ class ItemCard extends StatelessWidget {
                     onPressed: () {
                       if (onDelete != null) onDelete();
                     }),
-              )
+              ),
             ],
           )
         ],

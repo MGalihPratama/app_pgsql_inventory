@@ -4,7 +4,6 @@ import 'package:inventori/pages/home_page.dart';
 import 'package:inventori/pages/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui' as ui;
-import 'pages/splash_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +14,7 @@ void main() async {
 
   runApp(MaterialApp(
     // home: SplashPage(),
+    debugShowCheckedModeBanner: false,
     home: email == null ? LoginPage() : HomePage(),
   ));
 }

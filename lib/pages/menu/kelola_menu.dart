@@ -166,10 +166,7 @@ class _KelolaMenuState extends State<KelolaMenu> {
               ),
               onPressed: () {
                 // do something
-                createAlertDialog(context).then((onValue) {
-                  Scaffold.of(context)
-                      .showSnackBar(SnackBar(content: Text("Hello $onValue")));
-                });
+                createAlertDialog(context).then((onValue) {});
               },
             )
           ],
@@ -198,29 +195,16 @@ class _KelolaMenuState extends State<KelolaMenu> {
                                       // users.doc(e.id).delete();
                                       print(e['id']);
                                       // hapus(e);
-                                      DeleteAlert(context, e).then((onValue) {
-                                        Scaffold.of(context).showSnackBar(
-                                            SnackBar(
-                                                content:
-                                                    Text("Hello $onValue")));
-                                      });
+                                      DeleteAlert(context, e)
+                                          .then((onValue) {});
                                     },
                                     stok: () {
-                                      AlertStok(context, e).then((onValue) {
-                                        Scaffold.of(context).showSnackBar(
-                                            SnackBar(
-                                                content:
-                                                    Text("Hello $onValue")));
-                                      });
+                                      AlertStok(context, e).then((onValue) {});
                                     },
                                     onUpdate: () {
                                       print(e['name']);
-                                      AlertUpdate(context, e).then((onValue) {
-                                        Scaffold.of(context).showSnackBar(
-                                            SnackBar(
-                                                content:
-                                                    Text("Hello $onValue")));
-                                      });
+                                      AlertUpdate(context, e)
+                                          .then((onValue) {});
                                     },
                                   )
                                 : Container())

@@ -14,7 +14,7 @@ class RegPage extends StatefulWidget {
 
 class _RegPageState extends State<RegPage> {
   String name, email, password, password_confirmation;
-
+  bool _isLoading = false;
   final _key = new GlobalKey<FormState>();
   check() {
     final form = _key.currentState;
@@ -42,12 +42,19 @@ class _RegPageState extends State<RegPage> {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
       );
+      setState(() {
+        _isLoading = false;
+      });
     } else {
+      setState(() {
+        _isLoading = false;
+      });
       Fluttertoast.showToast(
         msg: "Registrasi Berhasil",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
       );
+
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => LoginPage()));
     }
@@ -166,6 +173,9 @@ class _RegPageState extends State<RegPage> {
                         // ),
                         ButtonWidget(
                           onClick: () {
+                            setState(() {
+                              _isLoading = true;
+                            });
                             check();
                           },
                           btnText: "Registrasi",

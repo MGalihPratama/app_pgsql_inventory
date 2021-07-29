@@ -69,89 +69,93 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Form(
-        key: _key,
-        child: Container(
-          padding: EdgeInsets.only(bottom: 30),
-          child: _isLoading
-              ? Center(child: CircularProgressIndicator())
-              : (Column(
-                  children: <Widget>[
-                    HeaderContainer("Login"),
-                    Expanded(
-                        flex: 1,
-                        child: Container(
-                            child: Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: ListView(
-                            children: <Widget>[
-                              TextFormField(
+    return new WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Form(
+          key: _key,
+          child: Container(
+            padding: EdgeInsets.only(bottom: 30),
+            child: _isLoading
+                ? Center(child: CircularProgressIndicator())
+                : (Column(
+                    children: <Widget>[
+                      HeaderContainer("Login"),
+                      Expanded(
+                          flex: 1,
+                          child: Container(
+                              child: Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: ListView(
+                              children: <Widget>[
+                                TextFormField(
+                                    validator: (e) {
+                                      if (e.isEmpty) {
+                                        return "Masukkan Email";
+                                      }
+                                    },
+                                    onSaved: (e) => email = e,
+                                    decoration: InputDecoration(
+                                        hintText: "Email",
+                                        icon: Icon(Icons.mail),
+                                        border: OutlineInputBorder())),
+                                SizedBox(
+                                  height: 10.0,
+                                ),
+                                TextFormField(
                                   validator: (e) {
                                     if (e.isEmpty) {
-                                      return "Masukkan Email";
+                                      return "Masukkan Password";
                                     }
                                   },
-                                  onSaved: (e) => email = e,
+                                  obscureText: _obscureText,
+                                  onSaved: (e) => password = e,
                                   decoration: InputDecoration(
-                                      hintText: "Email",
-                                      icon: Icon(Icons.mail),
-                                      border: OutlineInputBorder())),
-                              SizedBox(
-                                height: 10.0,
-                              ),
-                              TextFormField(
-                                validator: (e) {
-                                  if (e.isEmpty) {
-                                    return "Masukkan Password";
-                                  }
-                                },
-                                obscureText: _obscureText,
-                                onSaved: (e) => password = e,
-                                decoration: InputDecoration(
-                                    hintText: "Password",
-                                    icon: Icon(Icons.vpn_key),
-                                    border: OutlineInputBorder(),
-                                    suffixIcon: IconButton(
-                                      onPressed: _toggle,
-                                      icon: Icon(_obscureText
-                                          ? Icons.visibility_off
-                                          : Icons.visibility),
-                                    )),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 10.0),
-                                child: ButtonWidget(
-                                  onClick: () {
-                                    setState(() {
-                                      _isLoading = true;
-                                    });
-                                    check();
-                                  },
-                                  btnText: "Login",
+                                      hintText: "Password",
+                                      icon: Icon(Icons.vpn_key),
+                                      border: OutlineInputBorder(),
+                                      suffixIcon: IconButton(
+                                        onPressed: _toggle,
+                                        icon: Icon(_obscureText
+                                            ? Icons.visibility_off
+                                            : Icons.visibility),
+                                      )),
                                 ),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text("Belum punya akun? silahkan"),
-                                  MaterialButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => RegPage()));
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 10.0),
+                                  child: ButtonWidget(
+                                    onClick: () {
+                                      setState(() {
+                                        _isLoading = true;
+                                      });
+                                      check();
                                     },
-                                    child: Text("Registrasi",
-                                        style: TextStyle(color: Colors.red)),
+                                    btnText: "Login",
                                   ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        )))
-                  ],
-                )),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text("Belum punya akun? silahkan"),
+                                    MaterialButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    RegPage()));
+                                      },
+                                      child: Text("Registrasi",
+                                          style: TextStyle(color: Colors.red)),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )))
+                    ],
+                  )),
+          ),
         ),
       ),
     );

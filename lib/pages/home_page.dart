@@ -93,20 +93,43 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: orangeColors,
           automaticallyImplyLeading: false,
           actions: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.logout,
-                color: Colors.white,
+            // IconButton(
+            //   icon: Icon(
+            //     Icons.logout,
+            //     color: Colors.white,
+
+            //   ),
+            //   onPressed: () {
+            //     logOut(context);
+            //   },
+
+            // )
+            Container(
+              width: 90,
+              child: FlatButton(
+                onPressed: () => {logOut(context)},
+                padding: EdgeInsets.only(top: 7.0, right: 8.0),
+                child: Column(
+                  // Replace with a Row for horizontal icon + text
+                  children: <Widget>[
+                    Icon(
+                      Icons.logout,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      "Log Out",
+                      style: TextStyle(color: Colors.white),
+                    )
+                  ],
+                ),
               ),
-              onPressed: () {
-                logOut(context);
-              },
             )
           ],
         ),
         body: Container(
           padding: EdgeInsets.all(30.0),
           child: GridView.count(
+            mainAxisSpacing: 10,
             crossAxisCount: 2,
             children: <Widget>[
               Card(

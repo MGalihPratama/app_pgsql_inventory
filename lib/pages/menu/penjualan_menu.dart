@@ -176,12 +176,7 @@ class _PenjualanMenuState extends State<PenjualanMenu> {
                                     e['price'].toString(),
                                     e['stock'].toString(),
                                     jual: () {
-                                      AlertJual(context, e).then((onValue) {
-                                        Scaffold.of(context).showSnackBar(
-                                            SnackBar(
-                                                content:
-                                                    Text("Hello $onValue")));
-                                      });
+                                      AlertJual(context, e).then((onValue) {});
                                     },
                                   )
                                 : Container())
@@ -250,9 +245,6 @@ class _PenjualanMenuState extends State<PenjualanMenu> {
                           ),
                           onPressed: () {
                             JualStok(valueE);
-                            // nameController.text = '';
-                            // hargaController.text = '';
-                            // stokController.text = '';
                           }),
                     ),
                   ],
